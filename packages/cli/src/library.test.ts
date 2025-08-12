@@ -58,6 +58,11 @@ describe('library', () => {
         type: 'tool_call_request',
         request: { callId: '123', name: 'run_shell_command', args: { command: 'ls' } },
       },
+      {
+        type: 'tool_result',
+        request: { callId: '123', name: 'run_shell_command', args: { command: 'ls' } },
+        result: { callId: '123', result: 'tool result' },
+      },
       { type: 'content', content: 'final answer' },
     ]);
 

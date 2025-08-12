@@ -31,7 +31,7 @@ export type BotMessage =
   | { type: 'content'; content: string }
   | { type: 'thought'; thought: ThoughtSummary }
   | { type: 'tool_call_request'; request: ToolCallRequestInfo }
-  | { type: 'tool_result'; result: ToolResult }
+  | { type: 'tool_result'; request: ToolCallRequestInfo; result: ToolResult }
   | { type: 'error'; error: string }
   | { type: 'info'; message: string }
   | { type: 'finished'; reason: FinishReason; prompt_id: string };
@@ -205,7 +205,12 @@ export async function streamQuery(
 
       // Inform the bot about the tool results.
       for (const result of toolResults) {
-        callback({ type: 'tool_result', result });
+        const originalRequest = toolCallRequests.find(
+          (req) => req.callId === result.callId,
+        );
+        if (originalRequest) {
+          callback({ type: 'tool_result', request: originalRequest, result });
+        }
       }
 
       // Prepare the tool results to be sent back to the model.
