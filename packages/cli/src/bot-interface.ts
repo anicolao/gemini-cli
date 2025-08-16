@@ -1,5 +1,5 @@
 
-import { run } from "./index.js";
+import { streamQuery } from "./library.js";
 
 export async function runGeminiCli(prompt: string, callback: (message: string) => void) {
   // This is a placeholder implementation.

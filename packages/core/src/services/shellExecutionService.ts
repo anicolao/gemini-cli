@@ -161,13 +161,20 @@ export class ShellExecutionService {
         }
 
         if (isStreamingRawContent) {
-          onOutputEvent({ type: 'data', stream, chunk: strippedChunk });
+          if (onOutputEvent) {
+            onOutputEvent({ type: 'data', stream, chunk: strippedChunk });
+          }
         } else {
-          const totalBytes = outputChunks.reduce(
-            (sum, chunk) => sum + chunk.length,
-            0,
-          );
-          onOutputEvent({ type: 'binary_progress', bytesReceived: totalBytes });
+          if (onOutputEvent) {
+            const totalBytes = outputChunks.reduce(
+              (sum, chunk) => sum + chunk.length,
+              0,
+            );
+            onOutputEvent({
+              type: 'binary_progress',
+              bytesReceived: totalBytes,
+            });
+          }
         }
       };
 

@@ -149,7 +149,12 @@ export class ToolScheduler {
     }
 
     const targetDir = this.config.getTargetDir();
-    const { result } = ShellExecutionService.execute(command, targetDir);
+    const { result } = ShellExecutionService.execute(
+      command,
+      targetDir,
+      () => {},
+      new AbortController().signal,
+    );
     const executionResult = await result;
 
     if (executionResult.error) {

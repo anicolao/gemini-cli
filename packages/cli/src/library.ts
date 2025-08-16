@@ -8,21 +8,19 @@ import {
   Config,
   sessionId,
   GeminiClient,
-  PartListUnion,
   ToolCallRequestInfo,
   ThoughtSummary,
   ServerGeminiStreamEvent,
 } from '@google/gemini-cli-core';
 import { FinishReason, Part } from '@google/genai';
-import { loadCliConfig } from './config/config.js';
+import { loadCliConfig, CliArgs } from './config/config.js';
 import { loadSettings } from './config/settings.js';
 import { loadExtensions } from './config/extension.js';
 import { getErrorMessage } from '@google/gemini-cli-core';
 import { ToolScheduler, ToolResult } from './tool-scheduler.js';
 import { validateAuthMethod } from './config/auth.js';
 
-// Re-exporting this type for the bot's convenience.
-export type { PartListUnion } from '@google/gemini-cli-core';
+
 
 /**
  * A structured message object that the library will send to the bot.
@@ -70,7 +68,7 @@ export async function initialize(): Promise<Config> {
     extensions,
     sessionId,
     // We are not running in interactive mode, so we can provide mock argv.
-    { interactive: false },
+    {} as CliArgs,
   );
 
   // Initialize first, so all components are ready.
@@ -145,7 +143,7 @@ async function processStream(
       case 'max_session_turns':
         break;
       default:
-        const unreachable: never = event;
+        const unreachable: any = event;
         callback({
           type: 'error',
           error: `Unknown event type: ${unreachable}`,
@@ -166,7 +164,7 @@ async function processStream(
  */
 export async function streamQuery(
   config: Config,
-  prompt: PartListUnion,
+  prompt: any,
   callback: BotMessageCallback,
 ): Promise<void> {
   const geminiClient = config.getGeminiClient();
@@ -175,7 +173,7 @@ export async function streamQuery(
   }
 
   const toolScheduler = new ToolScheduler(config);
-  let currentPrompt: PartListUnion = prompt;
+  let currentPrompt: any = prompt;
 
   try {
     // This loop continues as long as the model requests tool calls.
